@@ -1,0 +1,22 @@
+#syntax=docker/dockerfile:1
+ARG CODE_VERSION=latest
+FROM debian:${CODE_VERSION}
+WORKDIR "/home/akowal/.ssh"
+COPY ./id_rsa.pub /tmp/id_rsa.pub
+ENV HOME /home/git
+
+RUN apt-get update && apt-get install -y \
+ git\
+ openssh-server \
+#useradd -m -p akowal -s /bin/bash akowal \
+useradd -m git \
+su git \
+cd $HOME \
+mkdir website.git \
+cd $HOME/website.git \
+RUN git init --bare \
+RUN git status 
+RUN hostname -I
+RUN cat /tmp/*
+
+
