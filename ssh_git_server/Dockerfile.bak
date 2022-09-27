@@ -1,0 +1,25 @@
+#syntax=docker/dockerfile:1
+ARG CODE_VERSION=bullseye-20220912-slim
+FROM debian:${CODE_VERSION}
+#WORKDIR "/home/akowal/.ssh"
+ENV HOME /home/git
+
+RUN apt-get update && apt-get install -y \
+ git\
+ openssh-server \
+ sudo \
+ telnet \
+#&& /etc/init.d/ssh start >/tmp/ssh_log \
+&& useradd -m git \ 
+&& su git \
+&& mkdir /home/git/website.git \
+&& cd /home/git/website.git \
+&& git init --bare 
+COPY ./id_rsa.pub /home/git/id_rsa.pub
+RUN mkdir /home/git/.ssh \ 
+&& mv /home/git/id_rsa.pub /home/git/.ssh/authorized_keys \
+&& service ssh start \
+&& service --status-all
+EXPOSE 22
+ENTRYPOINT ["/usr/sbin/sshd","-D"]
+#CMD ["service","ssh","start"]
