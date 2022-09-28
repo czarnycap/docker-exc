@@ -17,11 +17,12 @@ RUN mkdir /home/git/website.git \
 && mkdir /home/git/.ssh \
 && echo "some code starts here" > /home/git/website.git/code.sh \
 && cd /home/git/website.git \
-&& git config --global user.name "A Kowal" \
-&& git config --global user.mail "akowa@centos1.tk" \
-&& git init  \
+&& git init --bare \
+#&& git config --global user.name "A Kowal" \
+#&& git config --global user.mail "akowa@centos1.tk" \
 && chown -R git.git /home/git \
-&& git add /home/git/website.git/*\
+#&& git add /home/git/website.git/*\
+#&& git commit -m "works"\
 && service ssh start 
 
 #&& git commit -m "first commit"
