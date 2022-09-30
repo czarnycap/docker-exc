@@ -11,8 +11,8 @@ services:
       - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
-      - GF_LOG_MODE=console file 
-# user: '104'
+      - GF_LOG_MODE=console file
+  # user: '104'
     volumes:
       - grafana-storage:/var/lib/grafana
       - grafana-dashboards:/etc/grafana/provisioning
@@ -27,12 +27,21 @@ services:
     volumes:
       - ./prometheus:/etc/prometheus
       - prometheus-data:/prometheus
-
-
-
-
-
-
+  nodeexporter-centos:
+    image: prom/node-exporter
+    container_name: nodeexpoertercentos1
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+    ports:
+      - 9100:9100
 volumes:
   grafana-storage:
     external: true
