@@ -1,0 +1,15 @@
+server {
+
+	listen 80;
+	server_name deevvvvooopppzz;
+	
+location /grafana {
+	proxy_pass http://192.168.16.150:3000;
+	}
+
+location / {
+	root /data/www;
+	index pepe.jpg;
+}
+
+}

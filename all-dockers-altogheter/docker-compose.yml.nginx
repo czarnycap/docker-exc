@@ -1,0 +1,14 @@
+---
+version: "3.3"
+services:
+  #jenkins:
+  #  image: jenkins/jenkins:lts-jdk11:
+  nginx:
+    image: nginx
+    volumes:
+      - ./templates_nginx:/etc/nginx/templates
+      - ./static_nginx:/data/www
+    ports:
+      - 8080:80
+      - 8443:443
+    restart: unless-stopped
