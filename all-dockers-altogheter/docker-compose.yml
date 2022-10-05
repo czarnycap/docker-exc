@@ -3,6 +3,14 @@ version: "3.3"
 services:
   #jenkins:
   #  image: jenkins/jenkins:lts-jdk11:
+  ssh-server:
+    image: ssh-git
+    container_name: git-server
+    expose:
+      - 22
+    restart: unless-stopped
+    volumes:
+      - ./ssh_keys:/home/git/.ssh/
   grafana:
     image: grafana/grafana-oss
     container_name: grafana
@@ -41,6 +49,7 @@ services:
       - 9100:9100
   nginx:
     image: nginx
+    container_name: nginx
     volumes:
       - ./templates_nginx:/etc/nginx/templates
       - ./static_nginx:/data/www
@@ -48,33 +57,33 @@ services:
       - 8080:80
       - 8443:443
     restart: unless-stopped
-  nexus:
-    image: sonatype/nexus3
-    volumes:
-      - "nexus-data:/nexus-data"
-    ports:
-      - 8081:8081
-  sonarqube:
-    image: sonarqube:community
-    hostname: sonarqube
-    container_name: sonarqube
-    depends_on:
-      - db
-    volumes:
-      - sonarqube_data:/opt/sonarqube/data
-      - sonarqube_extensions:/opt/sonarqube/extensions
-      - sonarqube_logs:/opt/sonarqube/logs
-    ports:
-      - 9000:9000
-    restart: unless-stopped
-  db:
-    image: postgres:15rc1
-    hostname: postgresql
-    container_name: postgresql_15
-    volumes:
-      - postgresql:/var/lib/postgresql
-      - postgresql_data:/var/lib/postgresql/data
-    restart: unless-stopped
+  # nexus:
+  #   image: sonatype/nexus3
+  #   volumes:
+  #     - "nexus-data:/nexus-data"
+  #   ports:
+  #     - 8081:8081
+  # sonarqube:
+  #   image: sonarqube:community
+  #   hostname: sonarqube
+  #   container_name: sonarqube
+  #   depends_on:
+  #     - db
+  #   volumes:
+  #     - sonarqube_data:/opt/sonarqube/data
+  #     - sonarqube_extensions:/opt/sonarqube/extensions
+  #     - sonarqube_logs:/opt/sonarqube/logs
+  #   ports:
+  #     - 9000:9000
+  #   restart: unless-stopped
+  # db:
+  #   image: postgres:15rc1
+  #   hostname: postgresql
+  #   container_name: postgresql_15
+  #   volumes:
+  #     - postgresql:/var/lib/postgresql
+  #     - postgresql_data:/var/lib/postgresql/data
+  #   restart: unless-stopped
 volumes:
   grafana-storage:
     external: true
@@ -94,4 +103,3 @@ volumes:
     external: true
   postgresql:
     external: true
-    #comment 
