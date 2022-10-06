@@ -10,7 +10,7 @@ services:
     volumes:
       - jenkins_home:/var/jenkins_home
   ssh-server:
-    image: ssh-git
+    image: ssh-git:1.0
     container_name: git-server
     expose:
       - 22
