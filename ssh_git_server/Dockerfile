@@ -20,7 +20,7 @@ RUN mkdir /home/git/website.git \
 && git init --bare \
 #&& git config --global user.name "A Kowal" \
 #&& git config --global user.mail "akowa@centos1.tk" \
-&& chown -R git.git /home/git \
+&& chown -R git:git /home/git \
 #&& git add /home/git/website.git/*\
 #&& git commit -m "works"\
 && service ssh start 
@@ -28,5 +28,8 @@ RUN mkdir /home/git/website.git \
 #&& git commit -m "first commit"
 COPY ./id_rsa.pub /home/git/id_rsa.pub
 RUN mv /home/git/id_rsa.pub /home/git/.ssh/authorized_keys 
-ENTRYPOINT ["/usr/sbin/sshd","-D"]
 EXPOSE 22
+ENTRYPOINT ["/usr/sbin/sshd","-D"]
+
+
+

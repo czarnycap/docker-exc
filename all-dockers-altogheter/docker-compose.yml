@@ -1,8 +1,14 @@
 ---
 version: "3.3"
 services:
-  #jenkins:
-  #  image: jenkins/jenkins:lts-jdk11:
+  jenkins:
+    image: jenkins/jenkins:2.60.3
+    container_name: jenkins
+    ports: 
+      - 50000:50000
+      - 8888:8080
+    volumes:
+      - jenkins_home:/var/jenkins_home
   ssh-server:
     image: ssh-git
     container_name: git-server
@@ -11,59 +17,59 @@ services:
     restart: unless-stopped
     volumes:
       - ./ssh_keys:/home/git/.ssh/
-      - ./git_local_repos:/home/git/
-#   grafana:
-#     image: grafana/grafana-oss
-#     container_name: grafana
-#     ports:
-#       - 3000:3000
-#     restart: unless-stopped
-#     # user: '104'
-#     volumes:
-#       - grafana-storage:/var/lib/grafana
-#       - grafana-dashboards:/etc/grafana/provisioning
-#   prometheus:
-#     image: prom/prometheus
-#     container_name: prometheus
-#     command:
-#       - '--config.file=/etc/prometheus/prometheus.yml'
-#     ports:
-#       - 9090:9090
-#     restart: unless-stopped
-#     volumes:
-#       - ./prometheus:/etc/prometheus
-#       - prometheus-data:/prometheus
-#   nodeexporter-centos:
-#     image: prom/node-exporter
-#     container_name: nodeexpoertercentos1
-#     volumes:
-#       - /proc:/host/proc:ro
-#       - /sys:/host/sys:ro
-#       - /:/rootfs:ro
-#     command:
-#       - '--path.procfs=/host/proc'
-#       - '--path.rootfs=/rootfs'
-#       - '--path.sysfs=/host/sys'
-#       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-#     restart: unless-stopped
-#     ports:
-#       - 9100:9100
-#   nginx:
-#     image: nginx
-#     container_name: nginx
-#     volumes:
-#       - ./templates_nginx:/etc/nginx/templates
-#       - ./static_nginx:/data/www
-#     ports:
-#       - 8080:80
-#       - 8443:443
-#     restart: unless-stopped
-#   nexus:
-#     image: sonatype/nexus3
-#     volumes:
-#       - "nexus-data:/nexus-data"
-#     ports:
-#       - 8081:8081
+      # - ./git_local_repos:/home/git/
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    # user: '104'
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - grafana-dashboards:/etc/grafana/provisioning
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+  nodeexporter-centos:
+    image: prom/node-exporter
+    container_name: nodeexpoertercentos1
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+    ports:
+      - 9100:9100
+  nginx:
+    image: nginx
+    container_name: nginx
+    volumes:
+      - ./templates_nginx:/etc/nginx/templates
+      - ./static_nginx:/data/www
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+  nexus:
+    image: sonatype/nexus3
+    volumes:
+      - "nexus-data:/nexus-data"
+    ports:
+      - 8081:8081
   sonarqube:
     image: sonarqube:community
     hostname: sonarqube
@@ -104,3 +110,6 @@ volumes:
     external: true
   postgresql:
     external: true
+  jenkins_home:
+    external: true
+  #volumes zamontować osobno np /data
