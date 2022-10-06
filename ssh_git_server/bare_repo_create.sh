@@ -4,10 +4,6 @@
 #TODO validate if user exists
 #TODO validate if git is installed
 
-# if [$# -eq 0 ]
-# {
-
-# }
 GIT_DIR=/home/git
 
 #[[ -d $GIT_DIR ]] && echo "This $GIT_DIR exists!"|| echo "using $PWD as a base dir"
@@ -20,12 +16,8 @@ if [[ -d $GIT_DIR ]]
     GIT_DIR=$PWD
 fi
 
-
-
 #check number of arguments
 if [ "$#" -eq 0 ];then echo "please provide repo names as arguments"&& exit 127;fi
-
-
 
 for REPO in $*
 do
@@ -37,3 +29,4 @@ do
  
 done
 
+#remote script usage -> ssh git@172.18.0.2 "bash -s" < ./bare_repo_create.sh "bare-repo-1" "bare-repo-2"
