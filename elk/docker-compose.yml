@@ -9,7 +9,9 @@ services:
       - 9300:9300
 
   fluentd:
-    build: ./fluentd
+    #build: ./fluentd
+    image: elk_fluentd:latest
+    restart: unless-stopped
     volumes:
       - ./fluentd/conf:/fluentd/etc
       - ./logs:/logs

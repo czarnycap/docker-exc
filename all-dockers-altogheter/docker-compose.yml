@@ -1,23 +1,23 @@
 ---
 version: "3.3"
 services:
-  jenkins:
-    image: jenkins/jenkins:2.60.3
-    container_name: jenkins
-    ports: 
-      - 50000:50000
-      - 8888:8080
-    volumes:
-      - jenkins_home:/var/jenkins_home
-  ssh-server:
-    image: ssh-git:1.0
-    container_name: git-server
-    expose:
-      - 22
-    restart: unless-stopped
-    volumes:
-      - ./ssh_keys:/home/git/.ssh/
-      # - ./git_local_repos:/home/git/
+  # jenkins:
+  #   image: jenkins/jenkins:2.60.3
+  #   container_name: jenkins
+  #   ports: 
+  #     - 50000:50000
+  #     - 8080:8080
+  #   volumes:
+  #     - jenkins_home:/var/jenkins_home
+  # ssh-server:
+  #   image: ssh-git:1.0
+  #   container_name: git-server
+  #   expose:
+  #     - 22
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./ssh_keys:/home/git/.ssh/
+
   grafana:
     image: grafana/grafana-oss
     container_name: grafana
@@ -26,75 +26,101 @@ services:
     restart: unless-stopped
     # user: '104'
     volumes:
-      - grafana-storage:/var/lib/grafana
-      - grafana-dashboards:/etc/grafana/provisioning
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    ports:
-      - 9090:9090
-    restart: unless-stopped
-    volumes:
-      - ./prometheus:/etc/prometheus
-      - prometheus-data:/prometheus
-  nodeexporter-centos:
-    image: prom/node-exporter
-    container_name: nodeexpoertercentos1
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.rootfs=/rootfs'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-    restart: unless-stopped
-    ports:
-      - 9100:9100
+      - grafana-sto:/var/lib/grafana
+      - grafana-dash:/etc/grafana
+  # prometheus:
+  #   image: prom/prometheus
+  #   container_name: prometheus
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #   ports:
+  #     - 9090:9090
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./prometheus:/etc/prometheus
+  #     - prometheus-data:/prometheus
+  # nodeexporter-centos:
+  #   image: prom/node-exporter
+  #   container_name: nodeexpoertercentos1
+  #   volumes:
+  #     - /proc:/host/proc:ro
+  #     - /sys:/host/sys:ro
+  #     - /:/rootfs:ro
+  #   command:
+  #     - '--path.procfs=/host/proc'
+  #     - '--path.rootfs=/rootfs'
+  #     - '--path.sysfs=/host/sys'
+  #     - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+  #   restart: unless-stopped
+  #   ports:
+  #     - 9100:9100
   nginx:
     image: nginx
-    container_name: nginx
+    container_name: nginx_ballancer
     volumes:
-      - ./templates_nginx:/etc/nginx/templates
-      - ./static_nginx:/data/www
+      - ./templates_nginx/enabled:/etc/nginx/conf.d
+  #    - ./static_nginx:/data/www
+    # networks:
+    #   nagiosnetwork:
+    #     ipv4_address: 172.22.0.10
     ports:
       - 80:80
       - 443:443
     restart: unless-stopped
-  nexus:
-    image: sonatype/nexus3
+  nginx_site_A:
+    image: nginx
+    container_name: nginx_site_A
     volumes:
-      - "nexus-data:/nexus-data"
-    ports:
-      - 8081:8081
-  sonarqube:
-    image: sonarqube:community
-    hostname: sonarqube
-    container_name: sonarqube
-    depends_on:
-      - db
+      - ./nginx_site_A:/usr/share/nginx/html
+    networks:
+      nagiosnetwork:
+        ipv4_address: 172.22.0.11
+    expose:
+      - 80
+      - 443
+  nginx_site_B:
+    image: nginx
+    container_name: nginx_site_B
     volumes:
-      - sonarqube_data:/opt/sonarqube/data
-      - sonarqube_extensions:/opt/sonarqube/extensions
-      - sonarqube_logs:/opt/sonarqube/logs
-    ports:
-      - 9000:9000
-    restart: unless-stopped
-  db:
-    image: postgres:15rc1
-    hostname: postgresql
-    container_name: postgresql_15
-    volumes:
-      - postgresql:/var/lib/postgresql
-      - postgresql_data:/var/lib/postgresql/data
-    restart: unless-stopped
+      - ./nginx_site_B:/usr/share/nginx/html
+    networks:
+      nagiosnetwork:
+        ipv4_address: 172.22.0.12
+    expose:
+      - 80
+      - 443
+
+  # nexus:
+  #   image: sonatype/nexus3
+  #   volumes:
+  #     - "nexus-data:/nexus-data"
+  #   ports:
+  #     - 8081:8081
+  # sonarqube:
+  #   image: sonarqube:community
+  #   hostname: sonarqube
+  #   container_name: sonarqube
+  #   depends_on:
+  #     - db
+  #   volumes:
+  #     - sonarqube_data:/opt/sonarqube/data
+  #     - sonarqube_extensions:/opt/sonarqube/extensions
+  #     - sonarqube_logs:/opt/sonarqube/logs
+  #   ports:
+  #     - 9000:9000
+  #   restart: unless-stopped
+  # db:
+  #   image: postgres:15rc1
+  #   hostname: postgresql
+  #   container_name: postgresql_15
+  #   volumes:
+  #     - postgresql:/var/lib/postgresql
+  #     - postgresql_data:/var/lib/postgresql/data
+  #   restart: unless-stopped
 volumes:
-  grafana-storage:
+  grafana-sto:
     external: true
-  grafana-dashboards:
+  grafana-dash:
     external: true
   prometheus-data:
     external: true
@@ -112,4 +138,9 @@ volumes:
     external: true
   jenkins_home:
     external: true
-  #volumes zamontować osobno np /data
+  
+networks:
+  nagiosnetwork:
+    ipam:
+      config:
+        - subnet: 172.22.0.0/24
