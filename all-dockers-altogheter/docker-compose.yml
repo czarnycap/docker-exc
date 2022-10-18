@@ -18,19 +18,19 @@ services:
   #   volumes:
   #     - ./ssh_keys:/home/git/.ssh/
 
-  grafana:
-    image: grafana/grafana-oss
-    container_name: grafana
-    ports:
-      - 3000:3000
-    restart: unless-stopped
-    # user: '104'
-    volumes:
-      - grafana-sto:/var/lib/grafana
-      - grafana-dash:/etc/grafana
-      - ./grafana_config:/home/grafana
-    environment:
-      - GF_PATHS_CONFIG=/home/grafana/grafana.ini
+  # grafana:
+  #   image: grafana/grafana-oss
+  #   container_name: grafana
+  #   ports:
+  #     - 3000:3000
+  #   restart: unless-stopped
+  #   # user: '104'
+  #   volumes:
+  #     - grafana-sto:/var/lib/grafana
+  #     - grafana-dash:/etc/grafana
+  #     - ./grafana_config:/home/grafana
+  #   environment:
+  #     - GF_PATHS_CONFIG=/home/grafana/grafana.ini
   # prometheus:
   #   image: prom/prometheus
   #   container_name: prometheus
@@ -70,6 +70,8 @@ services:
       - 80:80
       - 443:443
     restart: unless-stopped
+    depends_on:
+      - nexus
   # nginx_site_A:
   #   image: nginx
   #   container_name: nginx_site_A
@@ -93,12 +95,16 @@ services:
   #     - 80
   #     - 443
 
-  # nexus:
-  #   image: sonatype/nexus3
-  #   volumes:
-  #     - "nexus-data:/nexus-data"
-  #   ports:
-  #     - 8081:8081
+  nexus:
+    image: sonatype/nexus3
+    container_name: nexus3
+    volumes:
+      - "nexus-data:/nexus-data"
+    ports:
+      - 8081:8081
+    environment:
+      - NEXUS_CONTEXT=/nexus
+
   # sonarqube:
   #   image: sonarqube:community
   #   hostname: sonarqube
@@ -142,8 +148,8 @@ volumes:
   jenkins_home:
     external: true
   
-networks:
-  nagiosnetwork:
-    ipam:
-      config:
-        - subnet: 172.22.0.0/24
+# networks:
+#   nagiosnetwork:
+#     ipam:
+#       config:
+#         - subnet: 172.22.0.0/24
