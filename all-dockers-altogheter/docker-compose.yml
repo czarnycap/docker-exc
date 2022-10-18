@@ -28,6 +28,9 @@ services:
     volumes:
       - grafana-sto:/var/lib/grafana
       - grafana-dash:/etc/grafana
+      - ./grafana_config:/home/grafana
+    environment:
+      - GF_PATHS_CONFIG=/home/grafana/grafana.ini
   # prometheus:
   #   image: prom/prometheus
   #   container_name: prometheus
@@ -67,28 +70,28 @@ services:
       - 80:80
       - 443:443
     restart: unless-stopped
-  nginx_site_A:
-    image: nginx
-    container_name: nginx_site_A
-    volumes:
-      - ./nginx_site_A:/usr/share/nginx/html
-    networks:
-      nagiosnetwork:
-        ipv4_address: 172.22.0.11
-    expose:
-      - 80
-      - 443
-  nginx_site_B:
-    image: nginx
-    container_name: nginx_site_B
-    volumes:
-      - ./nginx_site_B:/usr/share/nginx/html
-    networks:
-      nagiosnetwork:
-        ipv4_address: 172.22.0.12
-    expose:
-      - 80
-      - 443
+  # nginx_site_A:
+  #   image: nginx
+  #   container_name: nginx_site_A
+  #   volumes:
+  #     - ./nginx_site_A:/usr/share/nginx/html
+  #   networks:
+  #     nagiosnetwork:
+  #       ipv4_address: 172.22.0.11
+  #   expose:
+  #     - 80
+  #     - 443
+  # nginx_site_B:
+  #   image: nginx
+  #   container_name: nginx_site_B
+  #   volumes:
+  #     - ./nginx_site_B:/usr/share/nginx/html
+  #   networks:
+  #     nagiosnetwork:
+  #       ipv4_address: 172.22.0.12
+  #   expose:
+  #     - 80
+  #     - 443
 
   # nexus:
   #   image: sonatype/nexus3
