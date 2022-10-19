@@ -1,6 +1,9 @@
 ---
 version: "3.3"
 services:
+    ansible:
+      image: alpinelinux/ansible:latest
+      
   # jenkins:
   #   image: jenkins/jenkins:2.60.3
   #   container_name: jenkins
@@ -70,8 +73,8 @@ services:
       - 80:80
       - 443:443
     restart: unless-stopped
-    depends_on:
-      - nexus
+  #   depends_on:
+  #     - nexus
   # nginx_site_A:
   #   image: nginx
   #   container_name: nginx_site_A
@@ -95,15 +98,15 @@ services:
   #     - 80
   #     - 443
 
-  nexus:
-    image: sonatype/nexus3
-    container_name: nexus3
-    volumes:
-      - "nexus-data:/nexus-data"
-    ports:
-      - 8081:8081
-    environment:
-      - NEXUS_CONTEXT=/nexus
+  # nexus:
+  #   image: sonatype/nexus3
+  #   container_name: nexus3
+  #   volumes:
+  #     - "nexus-data:/nexus-data"
+  #   ports:
+  #     - 8081:8081
+    # environment:
+    #   # - NEXUS_CONTEXT=/nexus
 
   # sonarqube:
   #   image: sonarqube:community
