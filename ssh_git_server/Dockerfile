@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  git\
  openssh-server \
  sudo \
- telnet  
+ telnet \
+ python3 
 
 RUN useradd git  
 RUN mkdir /home/git 
@@ -17,7 +18,10 @@ RUN mkdir /home/git/.ssh
 RUN chown -R git:git /home/git
 
 RUN service ssh start 
-
+RUN useradd ansible
+RUN mkdir /home/ansible
+RUN mkdir /home/ansible
+RUN chown -R ansible:ansible /home/ansible
 
 #&& git commit -m "first commit"
 COPY ./id_rsa.pub /home/git/id_rsa.pub

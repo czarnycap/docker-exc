@@ -1,0 +1,11 @@
+    image: jenkins/jenkins:2.60.3
+    image: ssh-git:1.0
+    image: grafana/grafana-oss
+    image: prom/prometheus
+    image: prom/node-exporter
+    image: nginx
+  #   image: nginx
+  #   image: nginx
+    image: sonatype/nexus3
+    image: sonarqube:community
+    image: postgres:15rc1
